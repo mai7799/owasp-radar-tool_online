@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OWASP 安全評估雷達圖工具</title>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.0/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
     <div class="container">
         <h1>OWASP 安全評估雷達圖工具</h1>
@@ -67,36 +63,35 @@
             <div class="title-row">
                 <h2>弱點分布雷達圖</h2>
                 <div class="controls-row">
-                    <input type="text" id="echartsChartTitle" placeholder="請輸入圖表標題" value="弱點分布雷達圖">
-                    <button id="updateEchartsTitleBtn">更新標題</button>
+                    <input type="text" id="vulnerabilityMapChartTitle" placeholder="請輸入圖表標題" value="弱點分布雷達圖">
+                    <button id="updateVulnMapTitleBtn">更新標題</button>
                 </div>
             </div>
             <div class="flex-container">
                 <div class="controls-echarts">
                     <h2>添加弱點</h2>
                     <div class="form-group">
-                        <label for="vulnerabilityName">弱點名稱:</label>
-                        <input type="text" id="vulnerabilityName" placeholder="例如：SQL Injection in login">
+                        <label for="vulnNameInMap">弱點名稱:</label> <input type="text" id="vulnNameInMap" placeholder="例如：SQL Injection in login">
                     </div>
                     <div class="form-group">
-                        <label for="vulnerabilityCategory">OWASP Top 10 類別:</label>
-                        <select id="vulnerabilityCategory"></select> </div>
-                    <div class="form-group">
-                        <label for="vulnerabilitySeverity">嚴重度:</label>
-                        <select id="vulnerabilitySeverity">
-                            <option value="Critical">Critical (嚴重)</option>
-                            <option value="High" selected>High (高)</option>
-                            <option value="Medium">Medium (中)</option>
-                            <option value="Low">Low (低)</option>
-                        </select>
+                        <label for="vulnCategoryInMap">OWASP Top 10 類別:</label> <select id="vulnCategoryInMap"></select>
                     </div>
-                    <button id="addVulnerabilityBtn">添加弱點</button>
-                    <button id="downloadEchartsBtn">下載圖表</button>
-                    <button id="downloadVulnerabilityCSVBtn">導出CSV</button>
-                    <input type="file" id="importCSV" accept=".csv" style="display: none;">
-                    <button id="importVulnerabilityCSVBtn">導入CSV</button>
+                    <div class="form-group">
+                        <label for="vulnSeverityInMap">CVE (1-10):</label> <input type="number" id="vulnSeverityInMap" min="1" max="10" value="5" placeholder="1 (低) - 10 (嚴重)">
+                        <div class="severity-legend">
+                            <span class="sev-critical"></span> 9.0-10.0 (嚴重)
+                            <span class="sev-high"></span> 7.0-8.9 (高)
+                            <span class="sev-medium"></span> 4.0-6.9 (中)
+                            <span class="sev-low"></span> 0.1-3.9 (低)
+                        </div>
+                    </div>
+                    <button id="addVulnToMapBtn">添加弱點</button>
+                    <button id="resetVulnMapBtn">重置圖表</button>
+                    <button id="downloadVulnMapImageBtn">下載圖表</button>
+                    <input type="file" id="vulnMapWordFile" accept=".docx" style="display: none;">
+                    <button id="parseVulnMapWordBtn">從Word解析</button>
                     <h3>已添加弱點列表:</h3>
-                    <ul id="vulnerability-list" class="vulnerability-list-ul"></ul>
+                    <ul id="vulnerabilityListInMap" class="vulnerability-list-ul"></ul>
                 </div>
                 <div class="chart-container-echarts">
                     <div id="owaspRadarChart"></div>
@@ -105,60 +100,53 @@
         </div>
 
         <div id="compareScans" class="tabcontent">
-             <div class="title-row">
-                <h2>測試比較雷達圖</h2>
+            <div class="title-row">
+                <h2>初測與複測比較</h2>
                 <div class="controls-row">
-                    <input type="text" id="compareChartTitle" placeholder="請輸入圖表標題" value="不同測試結果比較雷達圖">
-                    <button id="updateCompareTitleBtn">更新標題</button>
+                    <input type="text" id="compareScansChartTitle" placeholder="請輸入圖表標題" value="初測與複測比較雷達圖">
+                    <button id="updateCompareScanTitleBtn">更新標題</button>
                 </div>
             </div>
             <div class="flex-container">
                 <div class="flex-item">
-                    <table id="compareTable" border="1">
-                        <thead>
-                            <tr>
-                                <th>OWASP 類別</th>
-                                </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                     <div class="controls">
-                        <button id="addScanBtn">新增一組測試</button>
-                        <button id="downloadCompareChartBtn">下載雷達圖</button>
-                        <button id="clearCompareBtn">全部清除</button>
+                    <div class="form-group"><label for="initialScan">初測數據 (CSV)</label><input type="file" id="initialScan" accept=".csv"></div>
+                    <div class="form-group"><label for="followupScan">複測數據 (CSV)</label><input type="file" id="followupScan" accept=".csv"></div>
+                    <div class="controls">
+                        <button id="loadCompareScanDataBtn">載入數據</button>
+                        <button id="downloadCompareScanChartBtn">下載雷達圖</button>
+                        <button id="downloadCSVTemplateBtn">下載CSV範本</button>
+                    </div>
+                    <div class="info">
+                        <h3>CSV 格式說明</h3>
+                        <p>CSV 檔案應包含以下欄位:</p>
+                        <ul>
+                            <li>category: 類別 (A01, A02, ...)</li>
+                            <li>score: 評分 (0-10)</li>
+                        </ul>
+                        <pre>category,score&#10;A01,7&#10;A02,5&#10;A03,8&#10;...</pre>
                     </div>
                 </div>
                 <div class="flex-item">
-                    <div class="chart-container">
-                        <canvas id="compareChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="compareScanChart"></canvas></div>
                 </div>
             </div>
         </div>
-        
+
         <div id="severityRadar" class="tabcontent">
             <div class="title-row">
                 <h2>弱點嚴重度分布雷達圖</h2>
                 <div class="controls-row">
-                    <input type="text" id="severityChartTitle" placeholder="請輸入圖表標題" value="OWASP 弱點嚴重度分布圖">
-                    <button id="updateSeverityTitleBtn">更新標題</button>
+                    <input type="text" id="severityRadarChartTitle" placeholder="請輸入圖表標題" value="弱點嚴重度分布雷達圖">
+                    <button id="updateSeverityRadarTitleBtn">更新標題</button>
                 </div>
             </div>
-            <div class="flex-container">
-                <div class="flex-item">
-                     <div id="severityInputsContainer">
-                        </div>
-                    <div class="controls">
-                        <button id="downloadSeverityChartBtn">下載雷達圖</button>
-                        <button id="clearSeverityBtn">全部重置</button>
-                    </div>
-                </div>
-                <div class="flex-item">
-                    <div class="chart-container">
-                        <canvas id="severityRadarChart"></canvas>
-                    </div>
-                </div>
+            <div class="controls" style="margin-bottom: 15px;">
+                <input type="file" id="severityWordFile" accept=".docx,.csv" style="display: none;">
+                <button id="parseSeverityFileBtn">上傳Word/CSV檔案並解析</button>
+                <button id="downloadSeverityRadarChartBtn">下載雷達圖</button>
+            </div>
+            <div class="chart-container" style="margin: 0 auto;">
+                <canvas id="severityRadarChart"></canvas>
             </div>
         </div>
     </div>

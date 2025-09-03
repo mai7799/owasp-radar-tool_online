@@ -1,115 +1,73 @@
-// js/modules/tab-compare-scans.js
+import { owaspCategories_ChartJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
 
-import { OWASP_CATEGORIES_CHARTJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
+let compareScanChart = null;
 
-let compareChart = null;
-const colors = ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
+function loadCompareScanData() {
+    const initialFile = document.getElementById('initialScan').files[0];
+    const followupFile = document.getElementById('followupScan').files[0];
+    if (!initialFile || !followupFile) {
+        alert('請同時選擇初測與複測的 CSV 檔案。');
+        return;
+    }
+    const datasets = [
+        { label: '初測', data: Array(10).fill(0), backgroundColor: 'rgba(54, 162, 235, 0.2)', borderColor: 'rgb(54, 162, 235)', borderWidth: 2 },
+        { label: '複測', data: Array(10).fill(0), backgroundColor: 'rgba(255, 99, 132, 0.2)', borderColor: 'rgb(255, 99, 132)', borderWidth: 2 }
+    ];
+    let filesParsed = 0;
+    const processFile = (file, datasetIndex) => {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                results.data.forEach(row => {
+                    const categoryIndex = owaspCategories_ChartJS.findIndex(cat => cat.startsWith(row.category));
+                    if (categoryIndex !== -1) {
+                        datasets[datasetIndex].data[categoryIndex] = parseFloat(row.score) || 0;
+                    }
+                });
+                filesParsed++;
+                if (filesParsed === 2) {
+                    compareScanChart.data.datasets = datasets;
+                    compareScanChart.update();
+                }
+            }
+        });
+    };
+    processFile(initialFile, 0);
+    processFile(followupFile, 1);
+}
 
-function initCompareChart() {
-    const ctx = document.getElementById('compareChart').getContext('2d');
-    compareChart = new Chart(ctx, {
+function downloadCSVTemplate() {
+    let csvContent = 'category,score\n';
+    owaspCategories_ChartJS.forEach(cat => {
+        csvContent += `${cat.split(':')[0]},0\n`;
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'owasp_template.csv');
+}
+
+function initCompareScanChart() {
+    const ctx = document.getElementById('compareScanChart').getContext('2d');
+    compareScanChart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: OWASP_CATEGORIES_CHARTJS,
-            datasets: []
+            labels: owaspCategories_ChartJS,
+            datasets: [
+                { label: '初測', data: Array(10).fill(0), backgroundColor: 'rgba(54, 162, 235, 0.2)', borderColor: 'rgb(54, 162, 235)', borderWidth: 2 },
+                { label: '複測', data: Array(10).fill(0), backgroundColor: 'rgba(255, 99, 132, 0.2)', borderColor: 'rgb(255, 99, 132)', borderWidth: 2 }
+            ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { r: { min: 0, beginAtZero: true } },
-            plugins: {
-                title: { display: true, text: '不同測試結果比較雷達圖' },
-                legend: { position: 'top' },
-            }
+            // 請從您的原始 index.html.txt 檔案中，將 initCompareScanChart 函式中的 options 物件複製到此處
         }
     });
 }
 
-function addScanResult() {
-    const scanName = prompt("請輸入這次測試的名稱 (例如: '第一次掃描', '修復後掃描'):");
-    if (!scanName) return;
-
-    if (compareChart.data.datasets.length >= 4) {
-        alert("最多只能比較四組資料。");
-        return;
-    }
-
-    const newDataset = {
-        label: scanName,
-        data: Array(10).fill(0),
-        backgroundColor: colors[compareChart.data.datasets.length],
-        borderColor: colors[compareChart.data.datasets.length].replace('0.6', '1'),
-        borderWidth: 1
-    };
-    compareChart.data.datasets.push(newDataset);
-    
-    renderCompareTable();
-    compareChart.update();
-}
-
-function renderCompareTable() {
-    const tableBody = document.getElementById('compareTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // 清空
-
-    OWASP_CATEGORIES_CHARTJS.forEach((category, index) => {
-        const row = tableBody.insertRow();
-        const cellCategory = row.insertCell();
-        cellCategory.textContent = category;
-
-        compareChart.data.datasets.forEach((dataset, dsIndex) => {
-            const cellInput = row.insertCell();
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.min = 0;
-            input.value = dataset.data[index];
-            input.dataset.dsIndex = dsIndex;
-            input.dataset.catIndex = index;
-            input.addEventListener('input', updateCompareChartFromTable);
-            cellInput.appendChild(input);
-        });
-    });
-
-    const tableHead = document.getElementById('compareTable').getElementsByTagName('thead')[0].rows[0];
-    // 清空除了第一個以外的 th
-    while (tableHead.cells.length > 1) {
-        tableHead.deleteCell(1);
-    }
-    compareChart.data.datasets.forEach(dataset => {
-        const th = document.createElement('th');
-        th.textContent = dataset.label;
-        tableHead.appendChild(th);
-    });
-}
-
-function updateCompareChartFromTable(event) {
-    const { dsIndex, catIndex } = event.target.dataset;
-    const value = parseFloat(event.target.value) || 0;
-    compareChart.data.datasets[dsIndex].data[catIndex] = value;
-    
-    // 自動調整圖表的最大值
-    const allData = compareChart.data.datasets.flatMap(ds => ds.data);
-    const maxVal = Math.max(...allData, 10);
-    compareChart.options.scales.r.max = Math.ceil(maxVal / 5) * 5;
-
-    compareChart.update();
-}
-
-function clearCompareData() {
-    if (confirm("確定要清除所有比較資料嗎？")) {
-        compareChart.data.datasets = [];
-        compareChart.update();
-        renderCompareTable();
-    }
-}
-
 export function init() {
-    initCompareChart();
-    document.getElementById('addScanBtn').addEventListener('click', addScanResult);
-    document.getElementById('clearCompareBtn').addEventListener('click', clearCompareData);
-    document.getElementById('updateCompareTitleBtn').addEventListener('click', () => {
-        updateChartJsChartTitle(compareChart, 'compareChartTitle');
-    });
-    document.getElementById('downloadCompareChartBtn').addEventListener('click', () => {
-        downloadChart('compareChart');
-    });
+    initCompareScanChart();
+    // 綁定事件
+    document.getElementById('loadCompareScanDataBtn').addEventListener('click', loadCompareScanData);
+    document.getElementById('downloadCompareScanChartBtn').addEventListener('click', () => downloadChart('compareScanChart'));
+    document.getElementById('downloadCSVTemplateBtn').addEventListener('click', downloadCSVTemplate);
+    document.getElementById('updateCompareScanTitleBtn').addEventListener('click', () => updateChartJsChartTitle(compareScanChart, 'compareScansChartTitle'));
 }

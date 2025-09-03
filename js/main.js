@@ -1,6 +1,3 @@
-// js/main.js
-
-// 導入 (import) 所有功能模組的 init 函式
 import { init as initCategoryScores } from './modules/tab-category-scores.js';
 import { init as initVulnerabilityMap } from './modules/tab-vulnerability-map.js';
 import { init as initCompareScans } from './modules/tab-compare-scans.js';
@@ -18,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const clickedTab = event.target.closest('button.tablinks');
         if (!clickedTab) return;
 
+        // 避免重複點擊
+        if (clickedTab.classList.contains('active')) {
+            return;
+        }
+
         const tabName = clickedTab.dataset.tab;
 
         // 隱藏所有內容，移除 active class
@@ -28,14 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(tabName).style.display = 'block';
         clickedTab.classList.add('active');
         
-        // 特別處理 ECharts 的重繪問題
-        if (tabName === 'vulnerabilityMap') {
-            // 假設 echartsRadarInstance 是在 tab-vulnerability-map.js 中建立並掛載到 window 上的
-            // 更好的做法是讓該模組導出一個 resize 函式
+        // ECharts 在隱藏的 tab 中初始化會沒有寬高，切換時需要手動 resize
+        if (tabName === 'vulnerabilityMap' && window.echartsRadarInstance) {
             setTimeout(() => {
-                if (window.echartsRadarInstance) {
-                    window.echartsRadarInstance.resize();
-                }
+                window.echartsRadarInstance.resize();
             }, 50);
         }
     });
