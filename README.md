@@ -6,9 +6,7 @@
 
 [**➡️ 前往線上工具 (Live Demo)**](https://mai7799.github.io/owasp-radar-tool_online/)
 
-![工具主頁面截圖]([https://i.imgur.com/your-screenshot-url.pn](https://github.com/user-attachments/assets/a9955159-a4a8-4b5a-bf64-51af2e3cc51f)
-
-*(建議：請將此處的圖片連結替換為您自己專案的截圖)*
+![工具主頁面截圖](https://github.com/user-attachments/assets/dd8fb696-94b9-463f-894a-d63664e95b68)
 
 ---
 
@@ -20,21 +18,25 @@
     * **用途**：快速統計在 OWASP Top 10 的各個類別中，分別發現了多少數量的弱點。
     * **輸入**：手動輸入每個類別的弱點數量，或從特定格式的 Word 報告中自動解析。
     * **輸出**：一張顯示各類別弱點數量的雷達圖，可下載為 PNG 圖片或 CSV 資料。
+<img width="865" height="648" alt="image" src="https://github.com/user-attachments/assets/4a136146-7503-444d-890e-7d36d5a870e5" />
 
 2.  **弱點分布雷達圖 (Vulnerability Distribution Polar Scatter Plot)**
     * **用途**：在極座標圖上精確展示每一個獨立弱點的 OWASP 分類及其對應的 CVE 風險分數。
     * **輸入**：手動逐一新增弱點名稱、選擇類別並輸入 CVE 分數 (1-10)。也可從特定格式的 Word 報告中自動解析名稱、分類與分數。
     * **輸出**：一張極座標散佈圖，點的位置代表弱點分類與風險，並可透過顏色區分風險等級。
+<img width="865" height="613" alt="image" src="https://github.com/user-attachments/assets/809a7172-c572-400d-b2ed-c0a4e79a3e9d" />
 
 3.  **測試比較雷達圖 (Scan Comparison Radar Chart)**
     * **用途**：比較兩次不同時間點（例如：初測與複測）的掃描結果，清晰呈現風險修復的進展。
     * **輸入**：上傳兩份包含 `category` 和 `score` 欄位的 CSV 檔案。
     * **輸出**：一張包含兩組數據的疊加雷達圖，可直觀比較差異。
+<img width="865" height="648" alt="image" src="https://github.com/user-attachments/assets/f98bf1ac-b4e2-404c-bf69-d89cfa573a01" />
 
 4.  **弱點嚴重度分布雷達圖 (Severity Distribution Radar Chart)**
     * **用途**：將不同嚴重等級（嚴重、高、中、低）的弱點數量分布在各個 OWASP 類別上，以評估整體風險態勢。
     * **輸入**：從特定格式的 Word 或 CSV 檔案中解析各類別下不同嚴重度的弱點數量。
     * **輸出**：一張多層次的雷達圖，每種顏色代表一種風險等級。
+<img width="865" height="648" alt="image" src="https://github.com/user-attachments/assets/15872c37-1beb-42f7-abaf-acf2edab983d" />
 
 ---
 
