@@ -1,4 +1,4 @@
-import { owaspCategories_ChartJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
+import { dpr, owaspCategories_ChartJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
 
 let compareScanChart = null;
 
@@ -58,7 +58,10 @@ function initCompareScanChart() {
             ]
         },
         options: {
-            // 請從您的原始 index.html.txt 檔案中，將 initCompareScanChart 函式中的 options 物件複製到此處
+            layout: { padding: { top: 10, bottom: 10 } },
+            scales: { r: { min: 0, max: 10, reverse: false, beginAtZero: true, ticks: { stepSize: 2, font: { size: 14 * dpr } }, pointLabels: { font: { size: 14 * dpr, family: 'Arial' } } } },
+            plugins: { title: { display: true, text: document.getElementById('compareScansChartTitle').value || '初測與複測比較雷達圖', font: { size: 20 * dpr, family: 'Arial' }, padding: { top: 0, bottom: 10 } }, legend: { position: 'top', align: 'center', labels: { boxWidth: 15, padding: 10, font: { size: 12 * dpr, family: 'Arial' } } } },
+            devicePixelRatio: dpr, maintainAspectRatio: false
         }
     });
 }

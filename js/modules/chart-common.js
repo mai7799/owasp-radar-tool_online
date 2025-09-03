@@ -1,3 +1,5 @@
+export const dpr = window.devicePixelRatio || 1;
+
 export const owaspCategories_ChartJS = [
     'A01: 權限控制失效', 'A02: 加密機制失效', 'A03: 注入式攻擊', 'A04: 不安全設計',
     'A05: 安全設定弱點', 'A06: 危險或過舊的元件', 'A07: 認證及驗證機制失效',

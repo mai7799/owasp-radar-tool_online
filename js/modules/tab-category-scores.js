@@ -1,4 +1,4 @@
-import { owaspCategories_ChartJS, categoryIds_ChartJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
+import { dpr,owaspCategories_ChartJS, categoryIds_ChartJS, updateChartJsChartTitle, downloadChart } from './chart-common.js';
 
 let categoryChart = null;
 
