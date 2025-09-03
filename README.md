@@ -10,7 +10,7 @@
 
 ---
 
-## ✨ 主要功能
+##  主要功能
 
 本工具提供四種不同的視覺化圖表，以應對不同的報告與分析需求：
 
@@ -40,7 +40,7 @@
 
 ---
 
-## 🚀 如何使用
+##  如何使用
 
 1.  **訪問線上工具**：[點擊此處](https://mai7799.github.io/owasp-radar-tool_online/)。
 2.  **選擇頁籤**：點擊頂部的頁籤以切換到您需要的功能。
@@ -52,22 +52,11 @@
 
 ---
 
-## 🛠️ 技術棧
-
-本專案完全基於前端技術，所有運算都在您的瀏覽器中完成，確保資料的私密性。
-
-* **HTML5**
-* **CSS3**
-* **JavaScript (ES6 Modules)**
-* **[Chart.js](https://www.chartjs.org/)** - 用於繪製雷達圖。
-* **[Apache ECharts](https://echarts.apache.org/)** - 用於繪製功能更豐富的極座標散佈圖。
-* **[Mammoth.js](https://github.com/mwilliamson/mammoth.js)** - 用於解析 `.docx` Word 檔案。
-* **[PapaParse](https://www.papaparse.com/)** - 用於解析 CSV 檔案。
-* **[FileSaver.js](https://github.com/eligrey/FileSaver.js/)** - 用於在客戶端儲存檔案。
+### 本專案完全基於前端技術，所有運算都在您的瀏覽器中完成，確保資料的私密性。
 
 ---
 
-## 💻 本地開發
+##  本地開發
 
 如果您想在本地端運行或修改此專案：
 
@@ -97,6 +86,6 @@
 
 ---
 
-## 📄 授權 (License)
+##  授權 (License)
 
 本專案採用 [MIT License](LICENSE) 授權。
