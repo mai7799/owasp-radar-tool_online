@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP 安全評估雷達圖工具</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>OWASP 安全評估雷達圖工具</h1>
+
+        <div class="tab">
+            <button class="tablinks active" data-tab="categoryScores">類別數量雷達圖</button>
+            <button class="tablinks" data-tab="vulnerabilityMap">弱點分布雷達圖</button>
+            <button class="tablinks" data-tab="compareScans">測試比較雷達圖</button>
+            <button class="tablinks" data-tab="severityRadar">弱點嚴重度分布雷達圖</button>
+        </div>
+
+        <div id="categoryScores" class="tabcontent" style="display: block;">
+            <div class="title-row">
+                <h2>OWASP Top 10 類別數量圖</h2>
+                <div class="controls-row">
+                    <input type="text" id="categoryScoresChartTitle" placeholder="請輸入圖表標題" value="OWASP Top 10 安全評估雷達圖">
+                    <button id="updateCategoryTitleBtn">更新標題</button> </div>
+            </div>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <div class="category-scores-inputs">
+                        <div class="form-group"><label for="A01">A01: 權限控制失效</label><input type="number" id="A01" min="0" value="0"></div>
+                        <div class="form-group"><label for="A02">A02: 加密機制失效</label><input type="number" id="A02" min="0" value="0"></div>
+                        <div class="form-group"><label for="A10">A10: 伺服端請求偽造</label><input type="number" id="A10" min="0" value="0"></div>
+                    </div>
+                    <div class="controls">
+                         <button id="downloadCategoryChartBtn">下載雷達圖</button>
+                        <button id="downloadCategoryCSVBtn">下載CSV資料</button>
+                        <button id="resetCategoryFormBtn">重置</button>
+                        <input type="file" id="wordFile" accept=".docx" style="display: none;">
+                        <button id="parseWordBtn">解析Word</button>
+                    </div>
+                </div>
+                <div class="flex-item">
+                    <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>

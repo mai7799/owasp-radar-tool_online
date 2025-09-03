@@ -1,0 +1,333 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-top: 0;
+    font-size: 24px;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    border-radius: 5px 5px 0 0;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 16px;
+    margin-right: 0px;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: #ff6b33;
+    color: white;
+}
+
+.tabcontent {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    animation: fadeEffect 1s;
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.chart-container {
+    /* General chart container for Chart.js */
+    position: relative;
+    width: 700px !important;
+    height: 525px !important;
+    margin: 0 auto;
+    /* Center Chart.js charts */
+}
+
+#vulnerabilityMap .chart-container-echarts {
+    flex: 2;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-height: 500px;
+}
+
+#owaspRadarChart {
+    width: 100%;
+    height: 500px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#vulnerabilityMap .form-group input[type="text"],
+#vulnerabilityMap .form-group input[type="number"],
+#vulnerabilityMap .form-group select {
+    width: calc(100% - 20px);
+    padding: 10px;
+}
+
+button {
+    background-color: #ff6b33;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #e55a25;
+}
+
+#vulnerabilityMap .controls-echarts button {
+    background-color: #ff6b33;
+    margin-top: 10px;
+}
+
+#vulnerabilityMap .controls-echarts button:hover {
+    background-color: #e55a25;
+}
+
+#vulnerabilityMap .delete-btn {
+    background-color: #dc3545;
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+#vulnerabilityMap .delete-btn:hover {
+    background-color: #c82333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.flex-item {
+    flex: 1;
+    min-width: 300px;
+}
+
+.flex-container>.flex-item:last-child:not(:first-child) {
+    flex: 0 0 700px !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#vulnerabilityMap .controls-echarts {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+}
+
+.vulnerability-list-ul {
+    list-style-type: none;
+    padding: 0;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-top: 15px;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.vulnerability-list-ul li {
+    background-color: #e9ecef;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.severity-legend {
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.severity-legend span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+.sev-critical {
+    background-color: #ff0000;
+}
+
+.sev-high {
+    background-color: #ff6b33;
+}
+
+.sev-medium {
+    background-color: #ffcc00;
+}
+
+.sev-low {
+    background-color: #66cc66;
+}
+
+@media screen and (max-width: 1200px) {
+    .flex-container {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 10px;
+    }
+}
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title-row h2 {
+    margin: 0;
+}
+
+.controls-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.controls-row input[type="text"] {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 32px;
+    width: 250px;
+    /* Adjusted width */
+}
+
+.controls-row button {
+    padding: 8px 15px;
+    /* Adjusted padding for consistency */
+    height: 32px;
+    /* Ensure consistent height */
+    line-height: 1;
+    /* Ensure text is centered vertically */
+}
+
+
+canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.controls button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.category-scores-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 columns */
+    gap: 0px 20px;
+    /* Row gap 0 (handled by form-group margin), Column gap 20px */
+}
+
+@media screen and (max-width: 600px) {
+    .controls {
+        justify-content: flex-start;
+    }
+
+    .controls button {
+        flex: 0 1 calc(50% - 5px);
+    }
+}
