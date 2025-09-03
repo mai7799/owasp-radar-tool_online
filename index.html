@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OWASP 安全評估雷達圖工具</title>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -14,6 +15,7 @@
     
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="container">
         <h1>OWASP 安全評估雷達圖工具</h1>
@@ -30,17 +32,25 @@
                 <h2>OWASP Top 10 類別數量圖</h2>
                 <div class="controls-row">
                     <input type="text" id="categoryScoresChartTitle" placeholder="請輸入圖表標題" value="OWASP Top 10 安全評估雷達圖">
-                    <button id="updateCategoryTitleBtn">更新標題</button> </div>
+                    <button id="updateCategoryTitleBtn">更新標題</button>
+                </div>
             </div>
             <div class="flex-container">
                 <div class="flex-item">
                     <div class="category-scores-inputs">
                         <div class="form-group"><label for="A01">A01: 權限控制失效</label><input type="number" id="A01" min="0" value="0"></div>
                         <div class="form-group"><label for="A02">A02: 加密機制失效</label><input type="number" id="A02" min="0" value="0"></div>
+                        <div class="form-group"><label for="A03">A03: 注入式攻擊</label><input type="number" id="A03" min="0" value="0"></div>
+                        <div class="form-group"><label for="A04">A04: 不安全設計</label><input type="number" id="A04" min="0" value="0"></div>
+                        <div class="form-group"><label for="A05">A05: 安全設定弱點</label><input type="number" id="A05" min="0" value="0"></div>
+                        <div class="form-group"><label for="A06">A06: 危險或過舊的元件</label><input type="number" id="A06" min="0" value="0"></div>
+                        <div class="form-group"><label for="A07">A07: 認證及驗證機制失效</label><input type="number" id="A07" min="0" value="0"></div>
+                        <div class="form-group"><label for="A08">A08: 軟體及資料完整性失效</label><input type="number" id="A08" min="0" value="0"></div>
+                        <div class="form-group"><label for="A09">A09: 資安記錄及監控失效</label><input type="number" id="A09" min="0" value="0"></div>
                         <div class="form-group"><label for="A10">A10: 伺服端請求偽造</label><input type="number" id="A10" min="0" value="0"></div>
                     </div>
                     <div class="controls">
-                         <button id="downloadCategoryChartBtn">下載雷達圖</button>
+                        <button id="downloadCategoryChartBtn">下載雷達圖</button>
                         <button id="downloadCategoryCSVBtn">下載CSV資料</button>
                         <button id="resetCategoryFormBtn">重置</button>
                         <input type="file" id="wordFile" accept=".docx" style="display: none;">
@@ -52,8 +62,106 @@
                 </div>
             </div>
         </div>
-        
+
+        <div id="vulnerabilityMap" class="tabcontent">
+            <div class="title-row">
+                <h2>弱點分布雷達圖</h2>
+                <div class="controls-row">
+                    <input type="text" id="echartsChartTitle" placeholder="請輸入圖表標題" value="弱點分布雷達圖">
+                    <button id="updateEchartsTitleBtn">更新標題</button>
+                </div>
+            </div>
+            <div class="flex-container">
+                <div class="controls-echarts">
+                    <h2>添加弱點</h2>
+                    <div class="form-group">
+                        <label for="vulnerabilityName">弱點名稱:</label>
+                        <input type="text" id="vulnerabilityName" placeholder="例如：SQL Injection in login">
+                    </div>
+                    <div class="form-group">
+                        <label for="vulnerabilityCategory">OWASP Top 10 類別:</label>
+                        <select id="vulnerabilityCategory"></select> </div>
+                    <div class="form-group">
+                        <label for="vulnerabilitySeverity">嚴重度:</label>
+                        <select id="vulnerabilitySeverity">
+                            <option value="Critical">Critical (嚴重)</option>
+                            <option value="High" selected>High (高)</option>
+                            <option value="Medium">Medium (中)</option>
+                            <option value="Low">Low (低)</option>
+                        </select>
+                    </div>
+                    <button id="addVulnerabilityBtn">添加弱點</button>
+                    <button id="downloadEchartsBtn">下載圖表</button>
+                    <button id="downloadVulnerabilityCSVBtn">導出CSV</button>
+                    <input type="file" id="importCSV" accept=".csv" style="display: none;">
+                    <button id="importVulnerabilityCSVBtn">導入CSV</button>
+                    <h3>已添加弱點列表:</h3>
+                    <ul id="vulnerability-list" class="vulnerability-list-ul"></ul>
+                </div>
+                <div class="chart-container-echarts">
+                    <div id="owaspRadarChart"></div>
+                </div>
+            </div>
         </div>
+
+        <div id="compareScans" class="tabcontent">
+             <div class="title-row">
+                <h2>測試比較雷達圖</h2>
+                <div class="controls-row">
+                    <input type="text" id="compareChartTitle" placeholder="請輸入圖表標題" value="不同測試結果比較雷達圖">
+                    <button id="updateCompareTitleBtn">更新標題</button>
+                </div>
+            </div>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <table id="compareTable" border="1">
+                        <thead>
+                            <tr>
+                                <th>OWASP 類別</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                     <div class="controls">
+                        <button id="addScanBtn">新增一組測試</button>
+                        <button id="downloadCompareChartBtn">下載雷達圖</button>
+                        <button id="clearCompareBtn">全部清除</button>
+                    </div>
+                </div>
+                <div class="flex-item">
+                    <div class="chart-container">
+                        <canvas id="compareChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="severityRadar" class="tabcontent">
+            <div class="title-row">
+                <h2>弱點嚴重度分布雷達圖</h2>
+                <div class="controls-row">
+                    <input type="text" id="severityChartTitle" placeholder="請輸入圖表標題" value="OWASP 弱點嚴重度分布圖">
+                    <button id="updateSeverityTitleBtn">更新標題</button>
+                </div>
+            </div>
+            <div class="flex-container">
+                <div class="flex-item">
+                     <div id="severityInputsContainer">
+                        </div>
+                    <div class="controls">
+                        <button id="downloadSeverityChartBtn">下載雷達圖</button>
+                        <button id="clearSeverityBtn">全部重置</button>
+                    </div>
+                </div>
+                <div class="flex-item">
+                    <div class="chart-container">
+                        <canvas id="severityRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/main.js" type="module"></script>
 </body>
