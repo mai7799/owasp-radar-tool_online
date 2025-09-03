@@ -1,6 +1,6 @@
 # OWASP 安全評估雷達圖工具 (OWASP Security Assessment Radar Chart Tool)
 
-[![GitHub Pages Deploy](https://img.shields.io/github/deployments/mai7799/owasp-radar-tool_online/production?label=Live%20Demo&logo=github)](https://mai7799.github.io/owasp-radar-tool_online/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-✅-green?style=for-the-badge&logo=github)](https://mai7799.github.io/owasp-radar-tool_online/)
 
 一個專為資訊安全從業人員、開發者與專案經理設計的網頁工具，旨在將 OWASP Top 10 安全風險評估結果視覺化，使其更直觀、易於理解與報告。
 
