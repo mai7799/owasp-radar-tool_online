@@ -32,7 +32,7 @@ function downloadCategoryCSV() {
     saveAs(blob, `owasp_scores_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
-// **【新增】** 主解析函式，自動判斷檔案類型
+// 主解析函式，自動判斷檔案類型
 function parseCategoryFile() {
     const fileInput = document.getElementById('categoryFile');
     if (!fileInput.files.length) { alert('請先選擇檔案'); return; }
@@ -48,7 +48,7 @@ function parseCategoryFile() {
     }
 }
 
-// **【新增】** CSV 解析邏輯
+// CSV 解析
 function parseCSVForCategories(file) {
     Papa.parse(file, {
         header: true,
@@ -82,13 +82,11 @@ function parseCSVForCategories(file) {
     });
 }
 
-// **【修改】** 將原本的 Word 解析邏輯封裝起來
 function parseWordForCategories(file) {
     const reader = new FileReader();
     reader.onload = function (event) {
         mammoth.convertToHtml({ arrayBuffer: event.target.result })
             .then(function (result) {
-                // ... (您原本 parseWordTable 的完整邏輯貼在這裡) ...
                 const tempDiv = document.createElement('div'); tempDiv.innerHTML = result.value;
                 const tables = tempDiv.querySelectorAll('table');
                 if (tables.length < 4) { alert('Word 檔案中找不到預期格式的表格'); return; }
@@ -152,7 +150,7 @@ export function init() {
     document.getElementById('downloadCategoryCSVBtn').addEventListener('click', downloadCategoryCSV);
     document.getElementById('resetCategoryFormBtn').addEventListener('click', resetCategoryForm);
     
-    const wordFileInput = document.getElementById('wordFile');
-    document.getElementById('parseSeverityFileBtn').addEventListener('click', () => wordFileInput.click());
-    wordFileInput.addEventListener('change', parseWordTable);
+    const fileInput = document.getElementById('categoryFile');
+    document.getElementById('parseCategoryFileBtn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', parseCategoryFile);
 }
