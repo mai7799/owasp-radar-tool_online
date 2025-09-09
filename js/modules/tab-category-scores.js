@@ -32,44 +32,87 @@ function downloadCategoryCSV() {
     saveAs(blob, `owasp_scores_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
-function parseWordTable() {
-    const fileInput = document.getElementById('wordFile');
-    if (!fileInput.files.length) { alert('請先選擇 Word 檔案'); return; }
+// **【新增】** 主解析函式，自動判斷檔案類型
+function parseCategoryFile() {
+    const fileInput = document.getElementById('categoryFile');
+    if (!fileInput.files.length) { alert('請先選擇檔案'); return; }
     const file = fileInput.files[0];
+    const extension = file.name.split('.').pop().toLowerCase();
+
+    if (extension === 'docx') {
+        parseWordForCategories(file);
+    } else if (extension === 'csv') {
+        parseCSVForCategories(file);
+    } else {
+        alert('不支援的檔案格式，請選擇 .docx 或 .csv 檔案。');
+    }
+}
+
+// **【新增】** CSV 解析邏輯
+function parseCSVForCategories(file) {
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            try {
+                const categoryCounts = {};
+                categoryIds_ChartJS.forEach(id => { categoryCounts[id] = 0; });
+
+                results.data.forEach(row => {
+                    const category = row.category ? row.category.trim().toUpperCase() : '';
+                    const score = parseFloat(row.score) || 0;
+                    if (categoryCounts.hasOwnProperty(category)) {
+                        categoryCounts[category] += score; // 如果有多筆相同類別，就累加
+                    }
+                });
+
+                categoryIds_ChartJS.forEach(id => {
+                    document.getElementById(id).value = categoryCounts[id];
+                });
+                updateCategoryChart();
+                alert('CSV 檔案解析成功！');
+            } catch (error) {
+                alert('解析 CSV 失敗: ' + error.message);
+                console.error(error);
+            }
+        },
+        error: function(err) {
+            alert('讀取 CSV 檔案時發生錯誤: ' + err.message);
+        }
+    });
+}
+
+// **【修改】** 將原本的 Word 解析邏輯封裝起來
+function parseWordForCategories(file) {
     const reader = new FileReader();
     reader.onload = function (event) {
         mammoth.convertToHtml({ arrayBuffer: event.target.result })
             .then(function (result) {
+                // ... (您原本 parseWordTable 的完整邏輯貼在這裡) ...
                 const tempDiv = document.createElement('div'); tempDiv.innerHTML = result.value;
                 const tables = tempDiv.querySelectorAll('table');
-                if (tables.length === 0) { alert('找不到表格'); return; }
+                if (tables.length < 4) { alert('Word 檔案中找不到預期格式的表格'); return; }
                 const categoryCounts = {}; categoryIds_ChartJS.forEach(id => { categoryCounts[id] = 0; });
                 const rows = tables[3].querySelectorAll('tr');
 
                 rows.forEach((row, rowIndex) => {
-                    if (rowIndex === 0) return; const cells = row.querySelectorAll('td');
-                    let owaspText = '';
+                    if (rowIndex === 0) return;
+                    const cells = row.querySelectorAll('td');
+                    let owaspText = '', riskCount = 0;
                     if (cells.length === 7) {
                         owaspText = cells[6].innerText.trim();
                         riskCount = parseInt(cells[4].innerText.trim(), 10) || 0;
-                    }
-                    else if (cells.length === 6) {
+                    } else if (cells.length === 6) {
                         owaspText = cells[5].innerText.trim();
                         riskCount = parseInt(cells[3].innerText.trim(), 10) || 0;
-                    }
-                    else { return; }
+                    } else { return; }
                     const match = owaspText.match(/A\d{2}/);
                     if (match) { const id = match[0]; if (categoryCounts.hasOwnProperty(id)) { categoryCounts[id] += riskCount; } }
                 });
-                const maxCount = Math.max(...Object.values(categoryCounts), 0);
-                const maxScale = Math.max(5, Math.ceil(maxCount / 5) * 5);
-                if (categoryChart) {
-                    categoryChart.options.scales.r.max = maxScale;
-                    categoryChart.options.scales.r.ticks.stepSize = Math.max(1, Math.ceil(maxScale / 5));
-                    categoryIds_ChartJS.forEach(id => { const input = document.getElementById(id); if (input) { input.value = categoryCounts[id]; } });
-                    updateCategoryChart();
-                }
-            }).catch(function (error) { alert('解析失敗: ' + error.message); });
+                categoryIds_ChartJS.forEach(id => { document.getElementById(id).value = categoryCounts[id]; });
+                updateCategoryChart();
+                alert('Word 檔案解析成功！');
+            }).catch(function (error) { alert('解析 Word 失敗: ' + error.message); console.error(error); });
     };
     reader.readAsArrayBuffer(file);
 }
