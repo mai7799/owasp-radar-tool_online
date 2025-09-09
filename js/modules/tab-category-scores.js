@@ -153,6 +153,6 @@ export function init() {
     document.getElementById('resetCategoryFormBtn').addEventListener('click', resetCategoryForm);
     
     const wordFileInput = document.getElementById('wordFile');
-    document.getElementById('parseWordBtn').addEventListener('click', () => wordFileInput.click());
+    document.getElementById('parseSeverityFileBtn').addEventListener('click', () => wordFileInput.click());
     wordFileInput.addEventListener('change', parseWordTable);
 }
